@@ -1,32 +1,33 @@
 const Form = require("../models/form");
+const Email = require("../models/email");
 const HttpError = require("../models/http-error");
 
 const createForm = async (req, res, next) => {
-  const { name, email, password, opinion } = req.body;
+  const { name, email, title, description, image, questions } = req.body;
 
   let existingUser;
   try {
-    existingUser = await Form.findOne({ email: email });
+    existingUser = await Email.findOne({ email: email });
   } catch (err) {
-    const error = new HttpError(
-      "Signing up failed, please try again later.",
-      500
-    );
+    const error = new HttpError("Form isn't valid, please try again.", 500);
     return next(error);
   }
 
   if (!existingUser) {
     const error = new HttpError(
-      "User Not in Bio-medical Engineering, please choose differenct Account.",
+      "User isn't in SBME, please choose differenct Account.",
       422
     );
     return next(error);
   }
 
   const createdForm = new Form({
-    name,
+    user: name,
     email,
-    opinion,
+    title,
+    description,
+    image,
+    questions,
   });
 
   try {
@@ -36,7 +37,7 @@ const createForm = async (req, res, next) => {
     return next(error);
   }
 
-  res.status(201).json({ Form: createdForm.toObject({ getters: true }) });
+  res.status(201).json({ form: createdForm.toObject({ getters: true }) });
 };
 
 const getFormById = async (req, res, next) => {
@@ -61,7 +62,7 @@ const getFormById = async (req, res, next) => {
     return next(error);
   }
 
-  res.json({ form: form.toObject({ getters: true }) }); // => { place } => { place: place }
+  res.json({ form: form.toObject({ getters: true }) });
 };
 
 const updateFrom = async (req, res, next) => {
@@ -72,7 +73,7 @@ const updateFrom = async (req, res, next) => {
     );
   }
 
-  const { title } = req.body;
+  const { title, description, image, questions } = req.body;
   const formId = req.params.pid;
 
   let form;
@@ -87,6 +88,9 @@ const updateFrom = async (req, res, next) => {
   }
 
   form.title = title;
+  form.description = description;
+  form.image = image;
+  form.questions = questions;
 
   try {
     await form.save();
@@ -106,10 +110,10 @@ const deleteForm = async (req, res, next) => {
 
   let form;
   try {
-    form = await form.findById(formId);
+    form = await Form.findById(formId);
   } catch (err) {
     const error = new HttpError(
-      "Something went wrong, could not delete place.",
+      "Something went wrong, could not delete the Form.",
       500
     );
     return next(error);
@@ -119,13 +123,13 @@ const deleteForm = async (req, res, next) => {
     await form.remove();
   } catch (err) {
     const error = new HttpError(
-      "Something went wrong, could not delete place.",
+      "Something went wrong, could not delete the Form.",
       500
     );
     return next(error);
   }
 
-  res.status(200).json({ message: "Deleted place." });
+  res.status(200).json({ message: "Deleted Form." });
 };
 
 exports.createForm = createForm;
