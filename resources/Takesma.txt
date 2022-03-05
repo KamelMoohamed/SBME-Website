@@ -1,0 +1,17 @@
+Home page -> Body
+form page -> Ibrahim
+Activites page -> Body
+material page -> Ibrahim
+teams page -> Ibrahim
+developers page -> Ibrahim 
+what is SBME page? -> Body 
+
+
+
+COLORS DONE
+ROUNDED BTNS
+
+
+Nav bar -> Ibrahim
+Footer -> Body
+
